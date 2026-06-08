@@ -2,11 +2,13 @@ const { getSimilarCompanies } = require("./companyDiscoveryService");
 const { getDecisionMakers } = require("./prospeoService");
 const { sendEmails } = require("./brevoService");
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const runPipeline = async (domain, dryRun = true) => {
     const companies = await getSimilarCompanies(domain);
 
     const companyDomains = companies
-        .slice(0, 2)
+        .slice(0, 1)
         .map((company) => company.domain)
         .filter(Boolean);
 
@@ -14,6 +16,10 @@ const runPipeline = async (domain, dryRun = true) => {
 
     for (const companyDomain of companyDomains) {
         try {
+            console.log("Waiting before Prospeo call...");
+            await delay(3000);
+
+            console.log("Calling Prospeo for:", companyDomain);
             const decisionMakers = await getDecisionMakers(companyDomain);
 
             if (decisionMakers.length > 0) {
@@ -55,7 +61,7 @@ const runPipeline = async (domain, dryRun = true) => {
     }
 
     return {
-        companies: companies.slice(0, 3),
+        companies: companies.slice(0, 2),
         searchedDomains: companyDomains,
         people,
         emailResults,
