@@ -2,21 +2,37 @@
 
 ## Overview
 
-This project automates the process of discovering similar companies, identifying relevant decision-makers, and preparing personalized outreach campaigns.
+The SubSpace Automated Outreach Pipeline is a Node.js-based automation system that streamlines the outreach process by discovering similar companies, identifying decision makers, and preparing outreach campaigns from a single company domain.
 
-The pipeline integrates company discovery, contact discovery, and email automation into a single workflow.
+The pipeline integrates company discovery, contact discovery, and email automation into a unified workflow.
+
+---
+
+## Live Deployment
+
+**API Endpoint**
+
+https://outreach-pipeline-jgz9.onrender.com/api/outreach
+
+---
+
+## GitHub Repository
+
+https://github.com/Aadhisaravanan13/outreach-pipeline
 
 ---
 
 ## Features
 
 * Discover similar companies using TheCompaniesAPI
-* Identify decision-makers using Prospeo
+* Identify decision makers using Prospeo
 * Retrieve LinkedIn profile information
-* Prepare outreach contact lists
-* Send outreach emails using Brevo
-* Support dry-run mode for safe testing
-* Graceful fallback handling for external API rate limits
+* Retrieve verified email status
+* Email outreach integration using Brevo
+* Dry Run mode for safe testing
+* Rate-limit handling
+* Fallback support for external API failures
+* REST API deployment on Render
 
 ---
 
@@ -33,8 +49,6 @@ Prospeo
       ↓
 Decision Makers
       ↓
-Contact Discovery
-      ↓
 Brevo
       ↓
 Email Outreach
@@ -44,12 +58,46 @@ Email Outreach
 
 ## Tech Stack
 
+### Backend
+
 * Node.js
 * Express.js
-* Axios
+
+### APIs
+
 * TheCompaniesAPI
-* Prospeo API
-* Brevo API
+* Prospeo
+* Brevo
+
+### Utilities
+
+* Axios
+* Dotenv
+
+### Deployment
+
+* Render
+
+---
+
+## Project Structure
+
+```text
+src
+├── controllers
+│   └── outreachController.js
+│
+├── routes
+│   └── outreachRoutes.js
+│
+├── services
+│   ├── companyDiscoveryService.js
+│   ├── prospeoService.js
+│   ├── brevoService.js
+│   └── outreachPipelineService.js
+│
+└── server.js
+```
 
 ---
 
@@ -57,27 +105,25 @@ Email Outreach
 
 ### Start Outreach Pipeline
 
-**POST**
-
 ```http
-/api/outreach
+POST /api/outreach
 ```
 
 ### Request Body
 
 ```json
 {
-  "domain": "subspace.com",
+  "domain": "marketday.com",
   "dryRun": true
 }
 ```
 
 ### Parameters
 
-| Field  | Type    | Description                         |
-| ------ | ------- | ----------------------------------- |
-| domain | string  | Target company domain               |
-| dryRun | boolean | Skip actual email sending when true |
+| Parameter | Type    | Description                         |
+| --------- | ------- | ----------------------------------- |
+| domain    | string  | Target company domain               |
+| dryRun    | boolean | Skip actual email sending when true |
 
 ---
 
@@ -86,11 +132,22 @@ Email Outreach
 ```json
 {
   "success": true,
-  "companies": [],
-  "searchedDomains": [],
-  "people": [],
-  "emailResults": [],
-  "summary": {},
+  "companies": [
+    {
+      "name": "Microsoft",
+      "domain": "microsoft.com",
+      "industry": "technology-software-and-services"
+    }
+  ],
+  "people": [
+    {
+      "name": "Maya Subhadra",
+      "title": "Principal RTL Design Engineer",
+      "company": "Microsoft",
+      "linkedin": "https://www.linkedin.com/...",
+      "emailStatus": "VERIFIED"
+    }
+  ],
   "dryRun": true
 }
 ```
@@ -109,8 +166,9 @@ COMPANIES_API_KEY=your_companies_api_key
 PROSPEO_API_KEY=your_prospeo_api_key
 
 BREVO_API_KEY=your_brevo_api_key
+
 BREVO_SENDER_NAME=AadhiDev
-BREVO_SENDER_EMAIL=your_verified_sender_email
+BREVO_SENDER_EMAIL=your_verified_email
 ```
 
 ---
@@ -118,9 +176,9 @@ BREVO_SENDER_EMAIL=your_verified_sender_email
 ## Installation
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Aadhisaravanan13/outreach-pipeline.git
 
-cd project
+cd outreach-pipeline
 
 npm install
 
@@ -133,33 +191,38 @@ npm run dev
 
 ### Prospeo Integration
 
-Prospeo is used to discover decision-makers and retrieve professional profile information.
+Prospeo is used to discover decision makers and retrieve professional profile information such as:
+
+* Name
+* Designation
+* LinkedIn URL
+* Verified email status
 
 ### Brevo Integration
 
-Brevo is used to send outreach emails through its transactional email API.
+Brevo is used for transactional email delivery and outreach automation.
 
-### Dry Run Support
+### Dry Run Mode
 
-To prevent accidental email delivery during testing, the pipeline supports a dry-run mode that skips actual email sending while preserving the workflow.
+Dry Run mode allows the workflow to be executed without sending actual emails, making testing safe and repeatable.
 
 ### Rate Limit Handling
 
-External APIs may occasionally return rate-limit errors. To ensure uninterrupted testing and demonstration, fallback contact structure is used only when external API rate limits prevent live retrieval.
+External APIs may occasionally enforce rate limits. The application includes handling mechanisms to prevent failures and maintain workflow stability.
 
 ---
 
-## Future Improvements
+## Future Enhancements
 
-* Real-time email verification
-* Personalized AI-generated outreach content
+* Personalized AI-generated outreach messages
 * Contact deduplication
-* Retry queues for failed API calls
-* Campaign analytics and tracking
+* Campaign analytics dashboard
+* Retry queues for failed requests
 * Database persistence
+* Bulk outreach campaigns
 
 ---
 
 ## Author
 
-Aadhi Saravanan
+Aadhi Saravanan S
