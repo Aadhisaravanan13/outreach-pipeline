@@ -21,7 +21,7 @@ const getSimilarCompanies = async (domain) => {
         name: company.about?.name,
         domain: company?.domain?.domain,
         industry: company.about?.industry
-    }))
+    }));
   } catch (error) {
     console.error("Company Discovery Error:", error.message);
     throw error;
